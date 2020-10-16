@@ -1,0 +1,26 @@
+#服务器端口
+server:
+  port: 8080
+  servlet:
+    context-path: /chefubao
+  # mysql数据库配置信息
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://39.99.138.203:3306/chefubao?characterEncoding=utf-8&useSSL=false
+    username: root1
+    password: liu970908
+  # redis 配置
+  redis:
+    database: 0
+    host: 39.107.49.58
+    port: 6379
+    password: 123456
+
+
+
+
+  #控制台打印sql配置信息
+logging:
+  level:
+    com.sw.chefubao.mapper: debug   #对应的mapper包
