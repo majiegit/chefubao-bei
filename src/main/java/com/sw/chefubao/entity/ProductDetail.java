@@ -6,17 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 轮播图
+ * 商品详情
  */
 @Data
-@TableName("slideshow_image")
-public class SlideShowImage {
+@TableName("product_detail")
+public class ProductDetail {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String imgName;
-    private String imgUse;
-    private String imgLocation;
-    private String imgUrl;
-    private String addTime;
-    private Integer isDelete;
+    private Integer productId;
+    private String imgPath;
 }

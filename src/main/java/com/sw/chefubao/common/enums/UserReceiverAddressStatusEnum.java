@@ -5,19 +5,19 @@ package com.sw.chefubao.common.enums;
  * @author MJ
  */
 public enum  UserReceiverAddressStatusEnum {
-    ADDRESS_NOT_DEFAULT("0","非默认地址"),
+    ADDRESS_NOT_DEFAULT(0,"非默认地址"),
 
-    ADDRESS_DEFAULT("1","默认地址");
+    ADDRESS_DEFAULT(1,"默认地址");
 
-    private String key;
+    private Integer key;
     private String desc;
 
-    UserReceiverAddressStatusEnum(String key, String desc) {
+    UserReceiverAddressStatusEnum(Integer key, String desc) {
         this.key = key;
         this.desc = desc;
     }
 
-    public String getKey() {
+    public Integer getKey() {
         return key;
     }
 
@@ -25,7 +25,7 @@ public enum  UserReceiverAddressStatusEnum {
         return desc;
     }
 
-    public static UserReceiverAddressStatusEnum getAppStatus(String key) {
+    public static UserReceiverAddressStatusEnum getAppStatus(Integer key) {
         for (UserReceiverAddressStatusEnum status : UserReceiverAddressStatusEnum.values()) {
             if (status.key.equals(key)) {
                 return status;

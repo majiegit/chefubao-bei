@@ -16,6 +16,10 @@ spring:
     host: 39.107.49.58
     port: 6379
     password: 123456
+  #d数据库中date 返回格式化
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   # 文件图片路径映射
   mvc:
     static-path-pattern: ${image-path}/**
@@ -28,3 +32,5 @@ image-path: /home/image
 logging:
   level:
     com.sw.chefubao.mapper: debug   #对应的mapper包
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml

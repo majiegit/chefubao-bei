@@ -68,6 +68,8 @@ public class R<T> {
 
     public static final R UPDATE_ERROR = new R(504, "更新错误");
 
+    public static final R SAVE_ERROR = new R(505, "保存失败");
+
     public static final R DELETE_ERROR = new R(506, "删除错误");
 
     public static final R UPLOAD_ERROR = new R(507, "上传错误");
@@ -93,6 +95,7 @@ public class R<T> {
 
     /**
      * 自定义返回信息
+     *
      * @param code
      * @param message
      * @return
@@ -101,6 +104,7 @@ public class R<T> {
         return data(code, message, null);
 
     }
+
     public static <T> R data(Integer code, String message, T data) {
         R error = new R();
         error.setCode(code);
