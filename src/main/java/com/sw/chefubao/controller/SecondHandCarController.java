@@ -132,7 +132,7 @@ public class SecondHandCarController {
     @Transactional
     public R register(@RequestParam("drivingLicenseId") Integer drivingLicenseId,
                       @RequestParam("contacts") String contacts, @RequestParam("phone") String phone,
-                      @RequestParam("price") Integer price, @RequestParam("description") String description,
+                      @RequestParam("price") Double price, @RequestParam("description") String description,
                       @RequestParam("serviceCharge") Double serviceCharge,
                       @RequestParam("file1") MultipartFile file1, @RequestParam("file2") MultipartFile file2) {
         //上传车辆照片

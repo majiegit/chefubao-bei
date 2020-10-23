@@ -8,21 +8,17 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 商品
+ * 分期买车提交信息
  */
-@TableName("product")
+@TableName("installment_buy_car_info")
 @Data
-public class Product {
+public class InstallmentBuyCarInfo {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String name;
-    private String imgPath;
-    private String description;
-    private Integer originalPrice;
-    private Integer currentPrice;
-    private Integer buyNum;
-    private Integer productTypeId;
+    private String phone;
+    private String cardNo;
+    private String explainInfo;
+    private String installmentBuyCarId;
     private Date updateTime;
-    private Integer isSoldOut;
-
 }

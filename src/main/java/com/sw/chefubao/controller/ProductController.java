@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sw.chefubao.common.R;
+import com.sw.chefubao.common.enums.ProductSoldOutEnum;
 import com.sw.chefubao.common.util.DoToBeanVoUtil;
 import com.sw.chefubao.entity.Product;
 import com.sw.chefubao.entity.ProductDetail;
@@ -42,7 +43,7 @@ public class ProductController {
     }
 
     /**
-     * 根据类别查询列表
+     * 根据类别查询在售商品列表
      *
      * @param productTypeId
      * @return
@@ -50,6 +51,7 @@ public class ProductController {
     @GetMapping("/listByType")
     public R listByType(Integer productTypeId) {
         Product product = new Product();
+        product.setIsSoldOut(ProductSoldOutEnum.NOT_SOLD_OUT.getKey());
         if (ObjectUtil.isNotEmpty(productTypeId)) {
             product.setProductTypeId(productTypeId);
         }
@@ -67,7 +69,9 @@ public class ProductController {
      */
     @GetMapping("/listByName")
     public R listByName(@RequestParam("name") String name) {
-        QueryWrapper<Product> queryWrapper = new QueryWrapper<>();
+        Product product = new Product();
+        product.setIsSoldOut(ProductSoldOutEnum.NOT_SOLD_OUT.getKey());
+        QueryWrapper<Product> queryWrapper = new QueryWrapper<>(product);
         List<Product> list = productService.list(queryWrapper.like("name", name).orderByDesc("update_time"));
         List<ProductWebListVo> resultListVo = DoToBeanVoUtil.toList(list, ProductWebListVo.class);
         return R.SELECT_SUCCESS.data(resultListVo);
@@ -96,7 +100,7 @@ public class ProductController {
      * @return
      */
     @GetMapping("/getById")
-    public R getByName(@RequestParam("id") Integer id) {
+    public R getById(@RequestParam("id") Integer id) {
         Product product = productService.getById(id);
         ProductDetail productDetail = new ProductDetail();
         productDetail.setProductId(id);
@@ -107,5 +111,16 @@ public class ProductController {
         return R.SELECT_SUCCESS.data(productDetailWebVo);
     }
 
+    /**
+     * ID查询商品
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/get")
+    public R getByIdOne(@RequestParam("id") Integer id) {
+        Product product = productService.getById(id);
+        return R.SELECT_SUCCESS.data(product);
+    }
 
 }
