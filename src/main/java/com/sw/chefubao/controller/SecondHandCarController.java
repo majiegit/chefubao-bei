@@ -124,22 +124,13 @@ public class SecondHandCarController {
      * @param contacts         联系人
      * @param phone            电话
      * @param price            出售价格 单位（元）
-     * @param file1            车辆照片1
-     * @param file2            车辆照片2
      * @return
      */
     @PostMapping("/register")
-    @Transactional
-    public R register(@RequestParam("drivingLicenseId") Integer drivingLicenseId,
+    public R register(@RequestParam("drivingLicenseId") String drivingLicenseId,
                       @RequestParam("contacts") String contacts, @RequestParam("phone") String phone,
-                      @RequestParam("price") Double price, @RequestParam("description") String description,
-                      @RequestParam("serviceCharge") Double serviceCharge,
-                      @RequestParam("file1") MultipartFile file1, @RequestParam("file2") MultipartFile file2) {
-        //上传车辆照片
-        String imgPath = applicaTionYmlConfig.getFilePath() + filePath;
-        String fileNameOne = FileUtils.upload(imgPath, file1);
-        String fileNameTwo = FileUtils.upload(imgPath, file2);
-
+                      @RequestParam("price") Double price, @RequestParam("description") String description) {
+        Double serviceCharge = 9.9;
         // 行驶证信息
         DrivingLicense drivingLicense = drivingLicenseService.getById(drivingLicenseId);
         // 封装二手车信息
@@ -150,18 +141,60 @@ public class SecondHandCarController {
         secondHandCar.setColor(drivingLicense.getColor());
         secondHandCar.setPrice(NumberUtil.round(price * 100, 0).intValue());
         secondHandCar.setBuyTime(drivingLicense.getBuyTime());
-        secondHandCar.setDrivingLicenseId(drivingLicenseId);
+        secondHandCar.setDrivingLicenseId(NumberUtil.parseInt(drivingLicenseId));
         secondHandCar.setContactName(contacts);
         secondHandCar.setContactPhone(phone);
-        secondHandCar.setCarImgOneLocation(imgPath + fileNameOne);
-        secondHandCar.setCarImgTwoLocation(imgPath + fileNameTwo);
         secondHandCar.setUpdateTime(new Date());
         secondHandCar.setServiceCharge(NumberUtil.round(serviceCharge * 100, 0).intValue());
         secondHandCar.setStatus(SecondHandCarStatusEnum.ON_SOLD.getKey());
         boolean save = secondHandCarService.save(secondHandCar);
         if (save) {
-            return R.UPLOAD_SUCCESS;
+            return R.SAVE_SUCCESS;
         }
-        return R.UPLOAD_ERROR;
+        return R.SAVE_ERROR;
     }
+
+    /**
+     * 上传出售车辆照片文件1
+     *
+     * @param drivingLicenseId
+     * @param file
+     * @return
+     */
+    @PostMapping("/upload/file1")
+    public R upload1(@RequestParam("drivingLicenseId") Integer drivingLicenseId,
+                     @RequestParam("file") MultipartFile file) {
+        //上传车辆照片
+        String imgPath = applicaTionYmlConfig.getFilePath() + filePath;
+        String fileNameOne = FileUtils.upload(imgPath, file);
+
+        boolean save = secondHandCarService.updateFile1(imgPath + fileNameOne, drivingLicenseId);
+        if (!save) {
+            return R.UPLOAD_ERROR;
+        }
+        return R.UPLOAD_SUCCESS;
+
+    }
+
+    /**
+     * 上传出售车辆照片文件2
+     *
+     * @param drivingLicenseId
+     * @param file
+     * @return
+     */
+    @PostMapping("/upload/file2")
+    public R upload2(@RequestParam("drivingLicenseId") Integer drivingLicenseId,
+                     @RequestParam("file") MultipartFile file) {
+        //上传车辆照片
+        String imgPath = applicaTionYmlConfig.getFilePath() + filePath;
+        String fileNameTwo = FileUtils.upload(imgPath, file);
+
+        boolean save = secondHandCarService.updateFile2(imgPath + fileNameTwo, drivingLicenseId);
+        if (!save) {
+            return R.UPLOAD_ERROR;
+        }
+        return R.UPLOAD_SUCCESS;
+    }
+
 }

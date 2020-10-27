@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sw.chefubao.mapper.SecondHandCarMapper">
+    <update id="updateFile1">
+       UPDATE second_hand_car set car_img_one_location = #{filePath} WHERE driving_license_id = #{drivingLicenseId}
+    </update>
+    <update id="updateFile2">
+       UPDATE second_hand_car set car_img_two_location = #{filePath} WHERE driving_license_id = #{drivingLicenseId}
+    </update>
+</mapper>

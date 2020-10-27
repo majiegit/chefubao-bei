@@ -1,15 +1,24 @@
 package com.sw.chefubao.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sw.chefubao.common.R;
+import com.sw.chefubao.common.enums.CarTypeEnum;
+import com.sw.chefubao.common.enums.SecondHandCarStatusEnum;
 import com.sw.chefubao.entity.DrivingLicense;
+import com.sw.chefubao.entity.SecondHandCar;
+import com.sw.chefubao.service.CarTypeService;
 import com.sw.chefubao.service.DrivingLicenseService;
+import com.sw.chefubao.service.SecondHandCarService;
+import com.sw.chefubao.vo.DrivingLicenseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,6 +30,10 @@ public class DrivingLicenseController {
 
     @Autowired
     private DrivingLicenseService drivingLicenseService;
+    @Autowired
+    private SecondHandCarService secondHandCarService;
+    @Autowired
+    private CarTypeService carTypeService;
 
     /**
      * 查询用户下所有行驶证
@@ -34,7 +47,29 @@ public class DrivingLicenseController {
         drivingLicense.setUserId(userId);
         QueryWrapper<DrivingLicense> queryWrapper = new QueryWrapper<>(drivingLicense);
         List<DrivingLicense> list = drivingLicenseService.list(queryWrapper);
-        return R.SELECT_SUCCESS.data(list);
+        LinkedList<DrivingLicenseVo> drivingLicenseVos = new LinkedList<>();
+        list.forEach((item) -> {
+            DrivingLicenseVo drivingLicenseVo = BeanUtil.toBean(item, DrivingLicenseVo.class);
+            // 校验行驶证车辆是否为禁止出售
+            Integer isSell = carTypeService.getById(item.getCarTypeId()).getIsSell();
+            if (isSell.equals(CarTypeEnum.FORBID_SOLD.getKey())) {
+                drivingLicenseVo.setStatus(CarTypeEnum.FORBID_SOLD.getKey());
+            } else if (isSell.equals(CarTypeEnum.ALLOW_SOLD.getKey())) {
+                drivingLicenseVo.setStatus(CarTypeEnum.ALLOW_SOLD.getKey());
+                 //  校验二手车辆是否有出售记录，如果有 状态 二手车出售的状态
+                SecondHandCar secondHandCar = new SecondHandCar();
+                secondHandCar.setDrivingLicenseId(item.getId());
+                QueryWrapper<SecondHandCar> secondHandCarQueryWrapper = new QueryWrapper<>(secondHandCar);
+                SecondHandCar one = secondHandCarService.getOne(secondHandCarQueryWrapper, true);
+                if (ObjectUtil.isNotEmpty(one)) {
+                    drivingLicenseVo.setStatus(one.getStatus());
+                } else {
+                    drivingLicenseVo.setStatus(SecondHandCarStatusEnum.UN_SOLD.getKey());
+                }
+            }
+            drivingLicenseVos.add(drivingLicenseVo);
+        });
+        return R.SELECT_SUCCESS.data(drivingLicenseVos);
     }
 
     /**

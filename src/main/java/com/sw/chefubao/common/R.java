@@ -36,7 +36,11 @@ public class R<T> {
 
     public static final R SUCCESS = new R(200, "操作成功");
 
+    public static final R AUTH_CODE_SUCCESS = new R(200, "验证码正确");
+
     public static final R SELECT_SUCCESS = new R(200, "查询成功");
+
+    public static final R SEND_SUCCESS = new R(200, "发送成功");
 
     public static final R INSERT_SUCCESS = new R(200, "新增成功");
 
@@ -77,6 +81,16 @@ public class R<T> {
     public static final R DOWNLOAD_ERROR = new R(508, "下载错误");
 
     public static final R OTHER_SYSTEM_ERROR = new R(509, "调用系统异常");
+
+    public static final R SELECT_ERROR = new R(510, "查询失败");
+
+    public static final R SELECT_USER_ERROR = new R(511, "用户不存在");
+
+    public static final R SEND_ERROR = new R(512, "发送失败");
+
+    public static final R AUTH_CODE_DISABLED_ERROR = new R(505, "验证码已过期，请重新发送");
+
+    public static final R AUTH_CODE_ERROR = new R(505, "验证码不正确");
 
     /**
      * 配合静态对象直接设置 data 参数

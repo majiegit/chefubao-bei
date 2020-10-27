@@ -5,20 +5,21 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+/**
+ * 用户
+ */
 @Data
-@TableName("user_receiver_address")
-public class UserReceiverAddress {
-
+@TableName("user")
+public class User {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private Integer userId;
-    private String consignee;
+    private String username;
     private String phone;
-    private String province;
-    private String city;
-    private String county;
+    private String idCard;
+    private String sex;
     private String address;
     private String detailedAddress;
-    private Integer status;
+    private String cardImgPositive;
+    private String cardImgNegative;
 
 }

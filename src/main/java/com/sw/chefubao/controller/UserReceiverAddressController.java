@@ -120,4 +120,15 @@ public class UserReceiverAddressController {
         }
         return R.DELETE_ERROR;
     }
+    /**
+     * 查询单个收货地址
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping("/get")
+    public R get(@RequestParam("id") Integer id) {
+        UserReceiverAddress byId = userReceiverAddressService.getById(id);
+        return R.SELECT_SUCCESS.data(byId);
+    }
 }

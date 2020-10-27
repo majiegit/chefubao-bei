@@ -9,4 +9,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class SecondHandCarServiceImpl extends ServiceImpl<SecondHandCarMapper, SecondHandCar> implements SecondHandCarService {
 
+    @Override
+    public boolean updateFile1(String filePath, Integer drivingLicenseId) {
+        baseMapper.updateFile1(filePath, drivingLicenseId);
+        return true;
+    }
+
+    @Override
+    public boolean updateFile2(String filePath, Integer drivingLicenseId) {
+        baseMapper.updateFile2(filePath, drivingLicenseId);
+        return true;
+    }
 }

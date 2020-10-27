@@ -5,6 +5,7 @@ import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sw.chefubao.common.R;
 import com.sw.chefubao.common.enums.OrderStatusEnum;
+import com.sw.chefubao.common.finals.RedisKeyFinal;
 import com.sw.chefubao.common.util.NumberUtils;
 import com.sw.chefubao.common.util.RedisUtils;
 import com.sw.chefubao.entity.OrderReceiverAddress;
@@ -107,7 +108,7 @@ public class OrderTableController {
             orderProductService.save(orderProduct);
         });
         /** 保存订单ID到redis  30 分钟不付款 订单取消**/
-        redisUtils.set("orderId_" + id, id, 60);
+        redisUtils.set(RedisKeyFinal.ORDER_ID_DISABLED_KEY + id, id, 1800);
         return R.SAVE_SUCCESS;
     }
 
