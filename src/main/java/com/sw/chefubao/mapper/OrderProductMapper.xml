@@ -2,6 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sw.chefubao.mapper.OrderProductMapper">
     <select id="listByOrderId" resultType="com.sw.chefubao.vo.OrderProductVo">
-       SELECT p.*,op.buy_number FROM order_product op INNER JOIN product p ON op.product_id= p.id AND op.order_id=#{orderId}
+       SELECT
+	p.id,
+	p.`name`,
+	p.img_path,
+	p.description,
+	p.original_price * 0.01 AS original_price,
+	p.current_price * 0.01 AS current_price,
+	p.update_time,
+	p.is_sold_out,
+	op.buy_number
+	FROM
+		order_product op
+	INNER JOIN product p ON op.product_id = p.id
+	AND op.order_id = #{orderId}
     </select>
+    <update id="updateSubtractStock">
+        update product SET stock = #{stock}-#{buyNumber} WHERE id =#{productId}
+    </update>
+    <update id="updateAddStock">
+        update product SET stock = #{stock}+#{buyNumber} WHERE id =#{productId}
+    </update>
 </mapper>

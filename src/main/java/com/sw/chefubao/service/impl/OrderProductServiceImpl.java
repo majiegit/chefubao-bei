@@ -16,4 +16,10 @@ public class OrderProductServiceImpl extends ServiceImpl<OrderProductMapper, Ord
         List<OrderProductVo> productList = baseMapper.listByOrderId(orderId);
         return productList;
     }
+
+    @Override
+    public int updateSubtractStock(Integer buyNumber, Integer stock, Integer productId) {
+        return baseMapper.updateSubtractStock(buyNumber, stock, productId);
+
+    }
 }

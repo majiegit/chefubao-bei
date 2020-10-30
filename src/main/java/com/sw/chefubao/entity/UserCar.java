@@ -25,6 +25,8 @@ public class UserCar {
     private String carFront45Photo;
     private String carRear45Photo;
     private String carInvoicePhoto;
+    private String carFootPhoto;
+    private String carMotorPhoto;
 
 
 }

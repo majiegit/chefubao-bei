@@ -13,6 +13,6 @@ public class ProductWebListVo {
     private Integer id;
     private String name;
     private String imgPath;
-    private Integer currentPrice;
+    private Double currentPrice;
     private Integer productTypeId;
 }

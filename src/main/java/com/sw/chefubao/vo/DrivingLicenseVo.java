@@ -1,6 +1,5 @@
 package com.sw.chefubao.vo;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,6 +26,6 @@ public class DrivingLicenseVo {
     private String dateOfIssue;
     private String validity;
     private Integer status;
-
-
+    private Integer carNumStatus;
+    private Integer carId;
 }

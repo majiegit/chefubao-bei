@@ -18,7 +18,7 @@ public class OrderVo {
     private Integer id;
     private String orderNo;
     private Integer orderReceiverAddressId;
-    private Integer payTotal;
+    private Double payTotal;
     private Integer status;
     private List<OrderProductVo> products;
 

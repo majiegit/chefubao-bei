@@ -8,14 +8,8 @@ import com.sw.chefubao.common.enums.OrderStatusEnum;
 import com.sw.chefubao.common.finals.RedisKeyFinal;
 import com.sw.chefubao.common.util.NumberUtils;
 import com.sw.chefubao.common.util.RedisUtils;
-import com.sw.chefubao.entity.OrderReceiverAddress;
-import com.sw.chefubao.entity.OrderTable;
-import com.sw.chefubao.entity.OrderProduct;
-import com.sw.chefubao.entity.UserReceiverAddress;
-import com.sw.chefubao.service.OrderProductService;
-import com.sw.chefubao.service.OrderReceiverAddressService;
-import com.sw.chefubao.service.OrderTableService;
-import com.sw.chefubao.service.UserReceiverAddressService;
+import com.sw.chefubao.entity.*;
+import com.sw.chefubao.service.*;
 import com.sw.chefubao.vo.OrderProductVo;
 import com.sw.chefubao.vo.OrderSaveParamVo;
 import com.sw.chefubao.vo.OrderVo;
@@ -45,6 +39,8 @@ public class OrderTableController {
     private UserReceiverAddressService userReceiverAddressService;
     @Autowired
     private RedisUtils redisUtils;
+    @Autowired
+    private ProductService productService;
 
     /**
      * 根据订单状态查询用户下的不同状态下的订单
@@ -62,7 +58,12 @@ public class OrderTableController {
         List<OrderTable> list = orderService.list(queryWrapper);
         LinkedList<OrderVo> orderVos = new LinkedList<>();
         list.forEach((order1) -> {
-            OrderVo orderVo = BeanUtil.toBean(order1, OrderVo.class);
+            OrderVo orderVo = new OrderVo();
+            orderVo.setId(order1.getId());
+            orderVo.setOrderNo(order1.getOrderNo());
+            orderVo.setPayTotal(order1.getPayTotal() * 0.01);
+            orderVo.setOrderReceiverAddressId(order1.getOrderReceiverAddressId());
+            orderVo.setStatus(order1.getStatus());
             List<OrderProductVo> productList = orderProductService.listByOrderId(order1.getId());
             orderVo.setProducts(productList);
             orderVos.add(orderVo);
@@ -100,12 +101,15 @@ public class OrderTableController {
         // 订单创建时间
         orderTable.setCreateTime(new Date());
         orderService.save(orderTable);
-        /**保存订单商品关系**/
+        /**保存订单商品关系  并减去库存**/
         Integer id = orderTable.getId();
         orderSaveParamVo.getOrderSaveParams().forEach((item) -> {
             OrderProduct orderProduct = BeanUtil.toBean(item, OrderProduct.class);
             orderProduct.setOrderId(id);
             orderProductService.save(orderProduct);
+            // 减库存
+            Product product = productService.getById(item.getProductId());
+            orderProductService.updateSubtractStock(item.getBuyNumber(), product.getStock(), item.getProductId());
         });
         /** 保存订单ID到redis  30 分钟不付款 订单取消**/
         redisUtils.set(RedisKeyFinal.ORDER_ID_DISABLED_KEY + id, id, 1800);
@@ -113,7 +117,7 @@ public class OrderTableController {
     }
 
     /**
-     * 删除订单
+     * 取消订单
      *
      * @param id
      * @return

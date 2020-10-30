@@ -7,6 +7,8 @@ import com.sw.chefubao.entity.RulesRegulations;
 import com.sw.chefubao.service.RulesRegulationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,7 +45,7 @@ public class RulesRegulationsController {
      */
     @PostMapping("/save")
     public R save(@RequestBody RulesRegulations rulesRegulations) {
-
+        rulesRegulations.setUpdateTime(new Date());
         boolean b = rulesRegulationsService.saveOrUpdate(rulesRegulations);
         if (b) {
             return R.SAVE_SUCCESS;

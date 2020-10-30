@@ -1,15 +1,21 @@
 package com.sw.chefubao.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sw.chefubao.common.R;
 import com.sw.chefubao.common.config.ApplicaTionYmlConfig;
 import com.sw.chefubao.common.enums.SecondHandCarStatusEnum;
 import com.sw.chefubao.common.util.FileUtils;
+import com.sw.chefubao.entity.CarType;
 import com.sw.chefubao.entity.DrivingLicense;
 import com.sw.chefubao.entity.SecondHandCar;
+import com.sw.chefubao.entity.UserCar;
+import com.sw.chefubao.service.CarTypeService;
 import com.sw.chefubao.service.DrivingLicenseService;
 import com.sw.chefubao.service.SecondHandCarService;
+import com.sw.chefubao.service.UserCarService;
+import com.sw.chefubao.vo.SecondHandCarVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +38,10 @@ public class SecondHandCarController {
     private DrivingLicenseService drivingLicenseService;
     @Autowired
     private ApplicaTionYmlConfig applicaTionYmlConfig;
+    @Autowired
+    private UserCarService userCarService;
+    @Autowired
+    private CarTypeService carTypeService;
     /**
      * 二手车出售登记上传车辆图片路径
      */
@@ -48,7 +58,13 @@ public class SecondHandCarController {
         secondHandCar.setStatus(SecondHandCarStatusEnum.ON_SOLD.getKey());
         QueryWrapper<SecondHandCar> queryWrapper = new QueryWrapper<>(secondHandCar);
         List<SecondHandCar> list = secondHandCarService.list(queryWrapper.orderByDesc("update_time"));
-        return R.SELECT_SUCCESS.data(list);
+        LinkedList<SecondHandCarVo> secondHandCars = new LinkedList<>();
+        list.forEach((item) -> {
+            SecondHandCarVo secondHandCarVo = BeanUtil.toBean(item, SecondHandCarVo.class);
+            secondHandCarVo.setPrice(item.getPrice() * 0.01);
+            secondHandCars.add(secondHandCarVo);
+        });
+        return R.SELECT_SUCCESS.data(secondHandCars);
     }
 
     /**
@@ -133,14 +149,16 @@ public class SecondHandCarController {
         Double serviceCharge = 9.9;
         // 行驶证信息
         DrivingLicense drivingLicense = drivingLicenseService.getById(drivingLicenseId);
+        UserCar userCar = userCarService.getById(drivingLicense.getCarId());
+        CarType carType = carTypeService.getById(userCar.getCarTypeId());
         // 封装二手车信息
         SecondHandCar secondHandCar = new SecondHandCar();
-        secondHandCar.setBrand(drivingLicense.getBrand());
-        secondHandCar.setType(drivingLicense.getCarType());
+        secondHandCar.setBrand(userCar.getBrand());
+        secondHandCar.setType(carType.getCarTypeName());
         secondHandCar.setDescription(description);
-        secondHandCar.setColor(drivingLicense.getColor());
+        secondHandCar.setColor(userCar.getColor());
         secondHandCar.setPrice(NumberUtil.round(price * 100, 0).intValue());
-        secondHandCar.setBuyTime(drivingLicense.getBuyTime());
+        secondHandCar.setBuyTime(userCar.getBuyDate());
         secondHandCar.setDrivingLicenseId(NumberUtil.parseInt(drivingLicenseId));
         secondHandCar.setContactName(contacts);
         secondHandCar.setContactPhone(phone);

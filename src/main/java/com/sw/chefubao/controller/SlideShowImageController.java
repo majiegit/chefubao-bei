@@ -87,23 +87,29 @@ public class SlideShowImageController {
     }
 
     /**
-     * 上传
+     * 保存
      *
      * @return
      */
-    @PostMapping("/uploading")
-    public R uploading(@RequestParam("imgUser") String imgUser, String imgUrl, @RequestParam("isDelete") Integer isDelete, @RequestParam("file") MultipartFile file) {
-        String imgLocaltion = applicaTionYmlConfig.getFilePath() + filePath;
-        String fileName = FileUtils.upload(imgLocaltion, file);
+    @PostMapping("/save")
+    public R uploading(Integer id, @RequestParam("imgName") String imgName,
+                       @RequestParam("imgUse") String imgUse, @RequestParam("imgUrl") String imgUrl,
+                       @RequestParam("isDelete") Integer isDelete, MultipartFile file) {
+
         SlideShowImage slideShowImage = new SlideShowImage();
-        slideShowImage.setImgUse(imgUser);
-        slideShowImage.setImgName(fileName);
+        if (file != null) {
+            String imgLocaltion = applicaTionYmlConfig.getFilePath() + filePath;
+            String fileName = FileUtils.upload(imgLocaltion, file);
+            slideShowImage.setImgLocation(imgLocaltion + fileName);
+        }
+        slideShowImage.setId(id);
+        slideShowImage.setImgUse(imgUse);
+        slideShowImage.setImgName(imgName);
         slideShowImage.setImgUrl(imgUrl);
-        slideShowImage.setImgLocation(imgLocaltion + fileName);
         slideShowImage.setAddTime(DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
         slideShowImage.setIsDelete(isDelete);
-        slideShowImageService.save(slideShowImage);
+        slideShowImageService.saveOrUpdate(slideShowImage);
 
-        return R.DELETE_ERROR;
+        return R.UPLOAD_SUCCESS;
     }
 }

@@ -1,16 +1,12 @@
 package com.sw.chefubao.controller;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sw.chefubao.common.R;
 import com.sw.chefubao.common.enums.CarTypeEnum;
 import com.sw.chefubao.common.enums.SecondHandCarStatusEnum;
-import com.sw.chefubao.entity.DrivingLicense;
-import com.sw.chefubao.entity.SecondHandCar;
-import com.sw.chefubao.service.CarTypeService;
-import com.sw.chefubao.service.DrivingLicenseService;
-import com.sw.chefubao.service.SecondHandCarService;
+import com.sw.chefubao.entity.*;
+import com.sw.chefubao.service.*;
 import com.sw.chefubao.vo.DrivingLicenseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +30,10 @@ public class DrivingLicenseController {
     private SecondHandCarService secondHandCarService;
     @Autowired
     private CarTypeService carTypeService;
-
+    @Autowired
+    private UserCarService userCarService;
+    @Autowired
+    private UserService userService;
     /**
      * 查询用户下所有行驶证
      *
@@ -43,15 +42,35 @@ public class DrivingLicenseController {
      */
     @GetMapping("/listByUserId")
     public R listByType(@RequestParam("userId") Integer userId) {
+        User user = userService.getById(userId);
         DrivingLicense drivingLicense = new DrivingLicense();
         drivingLicense.setUserId(userId);
         QueryWrapper<DrivingLicense> queryWrapper = new QueryWrapper<>(drivingLicense);
         List<DrivingLicense> list = drivingLicenseService.list(queryWrapper);
         LinkedList<DrivingLicenseVo> drivingLicenseVos = new LinkedList<>();
         list.forEach((item) -> {
-            DrivingLicenseVo drivingLicenseVo = BeanUtil.toBean(item, DrivingLicenseVo.class);
+            UserCar userCar = userCarService.getById(item.getCarId());
+            CarType carType = carTypeService.getById(userCar.getCarTypeId());
+            DrivingLicenseVo drivingLicenseVo = new DrivingLicenseVo();
+            drivingLicenseVo.setId(item.getId());
+            drivingLicenseVo.setUserId(item.getUserId());
+            drivingLicenseVo.setTitle(item.getTitle());
+            drivingLicenseVo.setStamp(item.getStamp());
+            drivingLicenseVo.setCarType(carType.getCarTypeName());
+            drivingLicenseVo.setCarNum(item.getCarNum());
+            drivingLicenseVo.setOwner(user.getUsername());
+            drivingLicenseVo.setAddress(user.getAddress());
+            drivingLicenseVo.setCarMotorNum(userCar.getCarMotorNum());
+            drivingLicenseVo.setCarRackNum(userCar.getCarRackNum());
+            drivingLicenseVo.setBrand(userCar.getBrand());
+            drivingLicenseVo.setColor(userCar.getColor());
+            drivingLicenseVo.setBuyTime(userCar.getBuyDate());
+            drivingLicenseVo.setDateOfIssue(item.getDateOfIssue());
+            drivingLicenseVo.setValidity(item.getValidity());
+            drivingLicenseVo.setCarNumStatus(item.getCarNumStatus());
+            drivingLicenseVo.setCarId(item.getCarId());
             // 校验行驶证车辆是否为禁止出售
-            Integer isSell = carTypeService.getById(item.getCarTypeId()).getIsSell();
+            Integer isSell = carType.getIsSell();
             if (isSell.equals(CarTypeEnum.FORBID_SOLD.getKey())) {
                 drivingLicenseVo.setStatus(CarTypeEnum.FORBID_SOLD.getKey());
             } else if (isSell.equals(CarTypeEnum.ALLOW_SOLD.getKey())) {

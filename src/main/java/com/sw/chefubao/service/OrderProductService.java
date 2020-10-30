@@ -10,4 +10,12 @@ public interface OrderProductService extends IService<OrderProduct> {
 
     List<OrderProductVo> listByOrderId(Integer id);
 
+    /**
+     * 下单成功减库存
+     * @param buyNumber
+     * @param stock
+     * @param productId
+     * @return
+     */
+    int updateSubtractStock(Integer buyNumber ,Integer stock,Integer productId);
 }

@@ -22,6 +22,7 @@ public class Product {
     private Integer currentPrice;
     private Integer buyNum;
     private Integer productTypeId;
+    private Integer stock;
     private Date updateTime;
     private Integer isSoldOut;
 

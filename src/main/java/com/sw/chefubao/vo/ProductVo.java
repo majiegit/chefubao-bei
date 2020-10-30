@@ -1,24 +1,24 @@
 package com.sw.chefubao.vo;
 
-
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 订单商品VO
+ * 商品Vo
  */
-@Getter
-@Setter
-public class OrderProductVo {
-        private Integer id;
+@Data
+public class ProductVo {
+    private Integer id;
     private String name;
     private String imgPath;
     private String description;
     private Double originalPrice;
     private Double currentPrice;
+    private Integer buyNum;
+    private Integer productTypeId;
+    private Integer stock;
     private Date updateTime;
     private Integer isSoldOut;
-    private Integer buyNumber;
+
 }

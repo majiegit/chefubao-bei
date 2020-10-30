@@ -16,20 +16,11 @@ public class DrivingLicense {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer userId;
-    private String title;
+    private Integer carId;
     private String stamp;
-    private String carType;
-    private Integer carTypeId;
-    private String carNum;
-    private String owner;
-    private String address;
-    private String carMotorNum;
-    private String carRackNum;
-    private String brand;
-    private String color;
-    private String buyTime;
+    private String title;
     private String dateOfIssue;
     private String validity;
-
-
+    private String carNum;
+    private Integer carNumStatus;
 }

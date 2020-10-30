@@ -11,10 +11,12 @@ import com.sw.chefubao.entity.ProductDetail;
 import com.sw.chefubao.service.ProductDetailService;
 import com.sw.chefubao.service.ProductService;
 import com.sw.chefubao.vo.ProductDetailWebVo;
+import com.sw.chefubao.vo.ProductVo;
 import com.sw.chefubao.vo.ProductWebListVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -38,7 +40,12 @@ public class ProductController {
     public R list() {
         QueryWrapper<Product> queryWrapper = new QueryWrapper<>();
         List<Product> list = productService.list(queryWrapper.orderByDesc("update_time"));
-        List<ProductWebListVo> resultListVo = DoToBeanVoUtil.toList(list, ProductWebListVo.class);
+        List<ProductWebListVo> resultListVo = new LinkedList<>();
+        list.forEach((item) -> {
+            ProductWebListVo productWebListVo = BeanUtil.toBean(item, ProductWebListVo.class);
+            productWebListVo.setCurrentPrice(item.getCurrentPrice() * 0.01);
+            resultListVo.add(productWebListVo);
+        });
         return R.SELECT_SUCCESS.data(resultListVo);
     }
 
@@ -57,7 +64,12 @@ public class ProductController {
         }
         QueryWrapper<Product> queryWrapper = new QueryWrapper<>(product);
         List<Product> list = productService.list(queryWrapper.orderByDesc("update_time"));
-        List<ProductWebListVo> resultListVo = DoToBeanVoUtil.toList(list, ProductWebListVo.class);
+        List<ProductWebListVo> resultListVo = new LinkedList<>();
+        list.forEach((item) -> {
+            ProductWebListVo productWebListVo = BeanUtil.toBean(item, ProductWebListVo.class);
+            productWebListVo.setCurrentPrice(item.getCurrentPrice() * 0.01);
+            resultListVo.add(productWebListVo);
+        });
         return R.SELECT_SUCCESS.data(resultListVo);
     }
 
@@ -73,7 +85,12 @@ public class ProductController {
         product.setIsSoldOut(ProductSoldOutEnum.NOT_SOLD_OUT.getKey());
         QueryWrapper<Product> queryWrapper = new QueryWrapper<>(product);
         List<Product> list = productService.list(queryWrapper.like("name", name).orderByDesc("update_time"));
-        List<ProductWebListVo> resultListVo = DoToBeanVoUtil.toList(list, ProductWebListVo.class);
+        List<ProductWebListVo> resultListVo = new LinkedList<>();
+        list.forEach((item) -> {
+            ProductWebListVo productWebListVo = BeanUtil.toBean(item, ProductWebListVo.class);
+            productWebListVo.setCurrentPrice(item.getCurrentPrice() * 0.01);
+            resultListVo.add(productWebListVo);
+        });
         return R.SELECT_SUCCESS.data(resultListVo);
     }
 
@@ -107,6 +124,8 @@ public class ProductController {
         QueryWrapper<ProductDetail> productDetailQueryWrapper = new QueryWrapper<>(productDetail);
         List<ProductDetail> productDetailList = productDetailService.list(productDetailQueryWrapper);
         ProductDetailWebVo productDetailWebVo = BeanUtil.toBean(product, ProductDetailWebVo.class);
+        productDetailWebVo.setCurrentPrice(product.getCurrentPrice() * 0.01);
+        productDetailWebVo.setOriginalPrice(product.getCurrentPrice() * 0.01);
         productDetailWebVo.setProductDetailList(productDetailList);
         return R.SELECT_SUCCESS.data(productDetailWebVo);
     }
@@ -120,7 +139,10 @@ public class ProductController {
     @GetMapping("/get")
     public R getByIdOne(@RequestParam("id") Integer id) {
         Product product = productService.getById(id);
-        return R.SELECT_SUCCESS.data(product);
+        ProductVo productVo = BeanUtil.toBean(product, ProductVo.class);
+        productVo.setCurrentPrice(product.getCurrentPrice() * 0.01);
+        productVo.setOriginalPrice(product.getOriginalPrice() * 0.01);
+        return R.SELECT_SUCCESS.data(productVo);
     }
 
 }

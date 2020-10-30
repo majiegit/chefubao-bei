@@ -12,6 +12,6 @@ public class ShoppingTrolleyVo {
     private Integer productNumber;
     private String name;
     private String imgPath;
-    private String currentPrice;
+    private Double currentPrice;
     private Integer isSoldOut;
 }

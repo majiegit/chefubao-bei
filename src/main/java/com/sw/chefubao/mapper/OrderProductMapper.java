@@ -14,4 +14,8 @@ import java.util.List;
 public interface OrderProductMapper extends BaseMapper<OrderProduct> {
 
     List<OrderProductVo> listByOrderId(@Param("orderId") Integer orderId);
+
+    int updateSubtractStock(@Param("buyNumber") Integer buyNumber, @Param("stock") Integer stock,@Param("productId")  Integer productId);
+
+    int updateAddStock(@Param("buyNumber") Integer buyNumber, @Param("stock") Integer stock,@Param("productId")  Integer productId);
 }

@@ -1,20 +1,22 @@
 package com.sw.chefubao.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sw.chefubao.common.R;
 import com.sw.chefubao.common.enums.OrderStatusEnum;
 import com.sw.chefubao.entity.OrderProduct;
 import com.sw.chefubao.entity.OrderTable;
+import com.sw.chefubao.entity.Product;
 import com.sw.chefubao.mapper.OrderProductMapper;
 import com.sw.chefubao.mapper.OrderReceiverAddressMapper;
 import com.sw.chefubao.mapper.OrderTableMapper;
 import com.sw.chefubao.service.OrderTableService;
+import com.sw.chefubao.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -23,6 +25,8 @@ public class OrderTableServiceImpl extends ServiceImpl<OrderTableMapper, OrderTa
     private OrderProductMapper orderProductMapper;
     @Autowired
     private OrderReceiverAddressMapper orderReceiverAddressMapper;
+    @Autowired
+    private ProductService productService;
 
     @Override
     public void deleteByStatus(String id) {
@@ -40,10 +44,16 @@ public class OrderTableServiceImpl extends ServiceImpl<OrderTableMapper, OrderTa
 
     @Override
     public boolean deleteOrder(Integer id) {
-        // 删除订单关联商品
+        // 取消订单关联商品 并加库存
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setOrderId(id);
         QueryWrapper<OrderProduct> orderProductQueryWrapper = new QueryWrapper<>(orderProduct);
+        //加库存
+        List<OrderProduct> orderProducts = orderProductMapper.selectList(orderProductQueryWrapper);
+        orderProducts.forEach((item) -> {
+            Product product = productService.getById(item.getProductId());
+            orderProductMapper.updateAddStock(item.getBuyNumber(), product.getStock(), item.getProductId());
+        });
         orderProductMapper.delete(orderProductQueryWrapper);
         // 删除订单关联收货地址
         OrderTable order = baseMapper.selectById(id);

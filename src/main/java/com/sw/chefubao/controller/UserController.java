@@ -51,6 +51,21 @@ public class UserController {
     }
 
     /**
+     * 根据id
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping("/getById")
+    public R get(@RequestParam("id") Integer id) {
+        User one = userService.getById(id);
+        if (ObjectUtil.isEmpty(one)) {
+            return R.SELECT_USER_ERROR;
+        }
+        return R.SELECT_SUCCESS.data(one);
+    }
+
+    /**
      * 用户信息登记
      *
      * @param username
@@ -63,10 +78,12 @@ public class UserController {
     @PostMapping("/save")
     public R save(@RequestParam("username") String username, @RequestParam("phone") String phone,
                   @RequestParam("username") String sex, @RequestParam("idCard") String idCard,
-                  @RequestParam("address") String address, @RequestParam("detailedAddress") String detailedAddress) {
+                  @RequestParam("address") String address, @RequestParam("detailedAddress") String detailedAddress,
+                  @RequestParam("wehatUserId") String wechatUserId) {
         User user = new User();
         user.setUsername(username);
         user.setPhone(phone);
+        user.setWechatUserId(wechatUserId);
         user.setSex(sex);
         user.setIdCard(idCard);
         user.setAddress(address);

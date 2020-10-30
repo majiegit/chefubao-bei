@@ -7,6 +7,7 @@ import com.sw.chefubao.service.InstallmentBuyCarInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,6 +38,7 @@ public class InstallmentBuyCarInfoController {
      */
     @PostMapping("/save")
     public R save(@RequestBody InstallmentBuyCarInfo installmentBuyCarInfo) {
+        installmentBuyCarInfo.setUpdateTime(new Date());
         boolean save = installmentBuyCarInfoService.save(installmentBuyCarInfo);
         if (!save) {
             return R.SAVE_ERROR;

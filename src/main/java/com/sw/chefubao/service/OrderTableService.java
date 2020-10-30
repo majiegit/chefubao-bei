@@ -11,7 +11,7 @@ public interface OrderTableService extends IService<OrderTable> {
     void deleteByStatus(String id);
 
     /**
-     * 删除订单
+     *  取消订单
      * @param id
      * @return
      */

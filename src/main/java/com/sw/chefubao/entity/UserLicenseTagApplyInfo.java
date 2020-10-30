@@ -6,11 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 拍照申领信息
+ * 牌照申领信息
  */
 @Data
 @TableName("user_license_tag_apply_info")
-public class userLicenseTagApplyInfo {
+public class UserLicenseTagApplyInfo {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer userId;
