@@ -113,7 +113,7 @@ public class OrderTableController {
         });
         /** 保存订单ID到redis  30 分钟不付款 订单取消**/
         redisUtils.set(RedisKeyFinal.ORDER_ID_DISABLED_KEY + id, id, 1800);
-        return R.SAVE_SUCCESS;
+        return R.SAVE_SUCCESS.data(orderTable);
     }
 
     /**

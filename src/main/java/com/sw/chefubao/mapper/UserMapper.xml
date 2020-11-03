@@ -7,4 +7,7 @@
     <update id="updateCardFilePathNegative">
        UPDATE `user` SET card_img_negative = #{fileNameCard} WHERE id =#{userId}
     </update>
+    <select id="selectUser" resultType="com.sw.chefubao.entity.User">
+        SELECT * from  user where  open_id= #{openId}
+    </select>
 </mapper>

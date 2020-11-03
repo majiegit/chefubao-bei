@@ -3,8 +3,8 @@ server:
   port: 8080
   servlet:
     context-path: /chefubao
-  # mysql数据库配置信息
 spring:
+  # mysql数据库配置信息
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://39.99.138.203:3306/chefubao?characterEncoding=utf-8&useSSL=false
@@ -13,14 +13,24 @@ spring:
   # redis 配置
   redis:
     database: 0
-    host: 39.107.49.58
+    host: 39.99.138.203
     port: 6379
-    password: 123456
+    password:
+  #d数据库中date 返回格式化
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  # 文件图片路径映射
+  mvc:
+    static-path-pattern: ${image-path}/**
+  resources:
+    static-locations: file:${image-path}
+# 图片上传地址
+image-path: /home/image
 
-
-
-
-  #控制台打印sql配置信息
+#控制台打印sql配置信息
 logging:
   level:
     com.sw.chefubao.mapper: debug   #对应的mapper包
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml

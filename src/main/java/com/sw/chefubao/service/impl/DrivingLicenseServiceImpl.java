@@ -2,6 +2,7 @@ package com.sw.chefubao.service.impl;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sw.chefubao.common.enums.DrivingLicenceEnum;
 import com.sw.chefubao.common.finals.DrivingLicenceFinal;
@@ -39,5 +40,16 @@ public class DrivingLicenseServiceImpl extends ServiceImpl<DrivingLicenseMapper,
         drivingLicense.setCarNum(null);
         drivingLicense.setCarNumStatus(DrivingLicenceEnum.CAR_NUM_NOT.getKey());
         return baseMapper.insert(drivingLicense);
+    }
+
+    @Override
+    public int updateCarNumStatus(Integer carId, String carNum, Integer key) {
+        DrivingLicense drivingLicense1 = new DrivingLicense();
+        drivingLicense1.setCarId(carId);
+        QueryWrapper<DrivingLicense> drivingLicenseQueryWrapper = new QueryWrapper<>(drivingLicense1);
+        DrivingLicense drivingLicense = new DrivingLicense();
+        drivingLicense.setCarNum(carNum);
+        drivingLicense.setCarNumStatus(DrivingLicenceEnum.CAR_NUM_OK.getKey());
+       return baseMapper.update(drivingLicense, drivingLicenseQueryWrapper);
     }
 }

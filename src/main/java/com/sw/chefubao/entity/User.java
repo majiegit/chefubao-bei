@@ -15,7 +15,7 @@ public class User {
     private Integer id;
     private String username;
     private String phone;
-    private String wechatUserId;
+    private String openId;
     private String idCard;
     private String sex;
     private String address;

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sw.chefubao.mapper.InstallmentBuyCarInfoMapper">
+    <select id="listAll" resultType="com.sw.chefubao.vo.InstallmentBuyCarInfoVo">
+	SELECT
+		a.id,
+		a. NAME,
+		a.phone,
+		a.card_no,
+		a.explain_info,
+		a.update_time,
+		b.`name` AS installmentBuyCarName
+	FROM
+		installment_buy_car_info a
+	INNER JOIN installment_buy_car b ON a.installment_buy_car_id = b.id
+	ORDER BY
+		a.update_time DESC
+		</select>
+</mapper>

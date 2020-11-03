@@ -1,9 +1,13 @@
 package com.sw.chefubao.controller;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sw.chefubao.common.R;
 import com.sw.chefubao.common.config.ApplicaTionYmlConfig;
+import com.sw.chefubao.common.config.WechatConfig;
 import com.sw.chefubao.common.finals.RedisKeyFinal;
 import com.sw.chefubao.common.util.FileUtils;
 import com.sw.chefubao.common.util.RedisUtils;
@@ -76,19 +80,18 @@ public class UserController {
      * @return
      */
     @PostMapping("/save")
-    public R save(@RequestParam("username") String username, @RequestParam("phone") String phone,
-                  @RequestParam("username") String sex, @RequestParam("idCard") String idCard,
-                  @RequestParam("address") String address, @RequestParam("detailedAddress") String detailedAddress,
-                  @RequestParam("wehatUserId") String wechatUserId) {
+    public R save(@RequestParam("id") Integer id, @RequestParam("username") String username,
+                  @RequestParam("phone") String phone, @RequestParam("sex") String sex, @RequestParam("idCard") String idCard,
+                  @RequestParam("address") String address, @RequestParam("detailedAddress") String detailedAddress) {
         User user = new User();
+        user.setId(id);
         user.setUsername(username);
         user.setPhone(phone);
-        user.setWechatUserId(wechatUserId);
         user.setSex(sex);
         user.setIdCard(idCard);
         user.setAddress(address);
         user.setDetailedAddress(detailedAddress);
-        boolean save = userService.save(user);
+        boolean save = userService.updateById(user);
         if (!save) {
             return R.SAVE_ERROR;
         }
@@ -107,7 +110,7 @@ public class UserController {
         //上传车辆照片
         String imgPath = applicaTionYmlConfig.getFilePath() + filePath;
         String fileNameCardOne = FileUtils.upload(imgPath, file);
-        boolean upload = userService.updateCardFilePathPositive(fileNameCardOne, userId);
+        boolean upload = userService.updateCardFilePathPositive(imgPath + fileNameCardOne, userId);
         if (!upload) {
             return R.UPLOAD_ERROR;
         }
@@ -126,7 +129,7 @@ public class UserController {
         //上传车辆照片
         String imgPath = applicaTionYmlConfig.getFilePath() + filePath;
         String fileNameCardOne = FileUtils.upload(imgPath, file);
-        boolean upload = userService.updateCardFilePathNegative(fileNameCardOne, userId);
+        boolean upload = userService.updateCardFilePathNegative(imgPath + fileNameCardOne, userId);
         if (!upload) {
             return R.UPLOAD_ERROR;
         }
@@ -173,4 +176,28 @@ public class UserController {
             }
         }
     }
+
+    @PostMapping("/login")
+    public R weChatLogin(@RequestParam("code") String code) {
+        String appId = WechatConfig.appid;
+        String secret = WechatConfig.secret;
+        String url = WechatConfig.openid_url + "?appid=" + appId +
+                "&secret=" + secret + "&js_code=" + code + "&grant_type=authorization_code";
+        String result = HttpUtil.get(url);
+        JSONObject jsonObject = JSONUtil.parseObj(result);
+        System.out.print(result);
+        String openId = jsonObject.get("openid").toString();
+        User user = userService.selectUser(openId);
+        User userParam = new User();
+        if (ObjectUtil.isEmpty(user)) {
+            // 没有用户则保存openId
+            userParam.setOpenId(openId);
+            userService.save(userParam);
+            return R.SELECT_SUCCESS.data(userParam);
+        } else {
+            return R.SELECT_SUCCESS.data(user);
+        }
+    }
+
+
 }

@@ -2,6 +2,9 @@ package com.sw.chefubao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sw.chefubao.entity.InstallmentBuyCarInfo;
+import com.sw.chefubao.vo.InstallmentBuyCarInfoVo;
+
+import java.util.List;
 
 /**
  * @author mj
@@ -9,4 +12,5 @@ import com.sw.chefubao.entity.InstallmentBuyCarInfo;
  */
 public interface InstallmentBuyCarInfoMapper extends BaseMapper<InstallmentBuyCarInfo> {
 
+    List<InstallmentBuyCarInfoVo> listAll();
 }

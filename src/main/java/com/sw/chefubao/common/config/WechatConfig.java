@@ -15,4 +15,6 @@ public class WechatConfig {
     public static final String TRADETYPE = "JSAPI";
     //微信统一下单接口地址
     public static final String pay_url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+    //微信用户唯一标识地址
+    public static final String openid_url = "https://api.weixin.qq.com/sns/jscode2session";
 }

@@ -19,6 +19,6 @@ public class InstallmentBuyCarInfo {
     private String phone;
     private String cardNo;
     private String explainInfo;
-    private String installmentBuyCarId;
+    private Integer installmentBuyCarId;
     private Date updateTime;
 }

@@ -2,12 +2,13 @@ package com.sw.chefubao.common.enums;
 
 /**
  * 申领信息状态
+ *
  * @author MJ
  */
 public enum UserLicenseTagApplyInfoStatusEnum {
-    APPLY_STATUS_NOT(0,"未处理"),
+    APPLY_STATUS_NOT(0, "未办理"),
+    APPLY_STATUS_SUCCESS(1, "已办理");
 
-    APPLY_STATUS_OK(1,"已处理");
 
     private Integer key;
     private String desc;

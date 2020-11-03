@@ -35,6 +35,8 @@ public class PayServiceImpl implements PayService {
      */
     public int updateOrderStatus(String orderId) {
         int id = NumberUtil.parseInt(orderId);
+        Integer key = OrderStatusEnum.ORDER_WAIT_FOR_SHIPMENTS.getKey();
+        System.out.print("key:"+key);
         int update = orderTableMapper.updateOrderStatus(id, OrderStatusEnum.ORDER_WAIT_FOR_SHIPMENTS.getKey());
         return update;
     }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sw.chefubao.common.R;
 import com.sw.chefubao.entity.InstallmentBuyCarInfo;
 import com.sw.chefubao.service.InstallmentBuyCarInfoService;
+import com.sw.chefubao.vo.InstallmentBuyCarInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,7 @@ public class InstallmentBuyCarInfoController {
      */
     @GetMapping("/list")
     public R list() {
-        QueryWrapper<InstallmentBuyCarInfo> queryWrapper = new QueryWrapper<>();
-        List<InstallmentBuyCarInfo> list = installmentBuyCarInfoService.list(queryWrapper.orderByDesc("update_time"));
+        List<InstallmentBuyCarInfoVo> list = installmentBuyCarInfoService.listAll();
         return R.SELECT_SUCCESS.data(list);
     }
 

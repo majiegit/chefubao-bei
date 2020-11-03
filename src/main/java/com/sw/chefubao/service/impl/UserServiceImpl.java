@@ -19,4 +19,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         baseMapper.updateCardFilePathNegative(fileNameCard, userId);
         return true;
     }
+
+    @Override
+    public User selectUser(String openId) {
+        return  baseMapper.selectUser(openId);
+    }
 }

@@ -7,4 +7,5 @@ public interface UserService extends IService<User> {
 
     boolean updateCardFilePathPositive(String fileNameCardOne, Integer userId);
     boolean updateCardFilePathNegative(String fileNameCardOne, Integer userId);
+    User selectUser(String openId);
 }

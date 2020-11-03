@@ -15,4 +15,5 @@ public interface UserMapper extends BaseMapper<User> {
 
     int updateCardFilePathNegative(@Param("fileNameCard") String fileNameCard, @Param("userId") Integer userId);
 
+    User selectUser(@Param("openId") String openId);
 }

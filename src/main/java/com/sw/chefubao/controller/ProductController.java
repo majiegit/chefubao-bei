@@ -3,9 +3,10 @@ package com.sw.chefubao.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sw.chefubao.common.R;
 import com.sw.chefubao.common.enums.ProductSoldOutEnum;
-import com.sw.chefubao.common.util.DoToBeanVoUtil;
 import com.sw.chefubao.entity.Product;
 import com.sw.chefubao.entity.ProductDetail;
 import com.sw.chefubao.service.ProductDetailService;
@@ -143,6 +144,24 @@ public class ProductController {
         productVo.setCurrentPrice(product.getCurrentPrice() * 0.01);
         productVo.setOriginalPrice(product.getOriginalPrice() * 0.01);
         return R.SELECT_SUCCESS.data(productVo);
+    }
+
+    /**
+     * 商品分页
+     *
+     * @param page
+     * @return
+     */
+    @GetMapping("/page")
+    public R pageList(Page<Product> page) {
+      /*  Page<Product> page1 = productService.pa
+        Page<Product> objectPage = new Page<>();
+        objectPage.setPages(page1.getPages());
+        objectPage.setRecords(page1.getRecords());
+        objectPage.setCurrent(page1.getCurrent());
+        objectPage.setSize(page1.getSize());
+        objectPage.setTotal(page1.getTotal());*/
+        return R.SELECT_SUCCESS;
     }
 
 }

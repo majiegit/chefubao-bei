@@ -67,7 +67,7 @@ public class UserCarController {
         UserCar userCar = BeanUtil.toBean(userCarParamVo, UserCar.class);
         boolean save = userCarService.save(userCar);
         if (save) {
-            drivingLicenseService.createDrivingLicense(userCarParamVo,userCar.getId());
+            drivingLicenseService.createDrivingLicense(userCarParamVo, userCar.getId());
         } else {
             return R.SAVE_ERROR;
         }
@@ -89,7 +89,7 @@ public class UserCarController {
         }
         String imgLocaltion = applicaTionYmlConfig.getFilePath() + filePath;
         String fileName = FileUtils.upload(imgLocaltion, file);
-        userCarService.uploadFile(id, fileName, photoFlied);
+        userCarService.uploadFile(id, imgLocaltion + fileName, photoFlied);
         return R.UPLOAD_SUCCESS;
     }
 }

@@ -15,4 +15,5 @@ public class ProductWebListVo {
     private String imgPath;
     private Double currentPrice;
     private Integer productTypeId;
+    private Integer buyNum;
 }

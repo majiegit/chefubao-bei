@@ -14,13 +14,14 @@ public class UserLicenseTagApplyInfo {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer userId;
-    private Integer userCarId;
+    private Integer carId;
     private String username;
     private String phone;
     private String address;
     private String detailedAddress;
-    private Integer serviceId;
     private Integer mode;
     private Integer status;
-
+    private Integer serviceId;
+    private String carNum;
+    private String peopleCarPhoto;
 }
