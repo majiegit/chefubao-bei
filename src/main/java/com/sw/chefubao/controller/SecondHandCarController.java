@@ -78,7 +78,11 @@ public class SecondHandCarController {
         drivingLicense.setUserId(userId);
         QueryWrapper<DrivingLicense> queryWrapperDrivingLicense = new QueryWrapper<>(drivingLicense);
         LinkedList<Integer> drivingLicenseIdList = new LinkedList<>();
-        drivingLicenseService.list(queryWrapperDrivingLicense).forEach((item) -> drivingLicenseIdList.add(item.getId()));
+        List<DrivingLicense> list1 = drivingLicenseService.list(queryWrapperDrivingLicense);
+        if (list1.size() == 0) {
+            return R.SELECT_ERROR;
+        }
+        list1.forEach((item) -> drivingLicenseIdList.add(item.getId()));
         QueryWrapper<SecondHandCar> queryWrapper = new QueryWrapper<>();
         List<SecondHandCar> list = secondHandCarService.list(queryWrapper.in("driving_license_id", drivingLicenseIdList));
         return R.SELECT_SUCCESS.data(list);

@@ -5,20 +5,26 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sw.chefubao.common.R;
 import com.sw.chefubao.common.config.ApplicaTionYmlConfig;
 import com.sw.chefubao.common.config.WechatConfig;
+import com.sw.chefubao.common.enums.UserTypeEnum;
 import com.sw.chefubao.common.finals.RedisKeyFinal;
 import com.sw.chefubao.common.util.FileUtils;
 import com.sw.chefubao.common.util.RedisUtils;
 import com.sw.chefubao.entity.User;
 import com.sw.chefubao.service.UserService;
+import com.sw.chefubao.vo.UserAccountVo;
+import com.sw.chefubao.vo.UserPeopleVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -91,6 +97,7 @@ public class UserController {
         user.setIdCard(idCard);
         user.setAddress(address);
         user.setDetailedAddress(detailedAddress);
+        user.setUserType(UserTypeEnum.USER_PEOPLE.getKey());
         boolean save = userService.updateById(user);
         if (!save) {
             return R.SAVE_ERROR;
@@ -177,6 +184,12 @@ public class UserController {
         }
     }
 
+    /**
+     * 个人用户登陆
+     *
+     * @param code
+     * @return
+     */
     @PostMapping("/login")
     public R weChatLogin(@RequestParam("code") String code) {
         String appId = WechatConfig.appid;
@@ -199,5 +212,70 @@ public class UserController {
         }
     }
 
+    /**
+     * 企业账号登陆
+     *
+     * @param username
+     * @param password
+     * @return
+     */
 
+    @PostMapping("/companyLogin")
+    public R weChatLogin(String username, String password) {
+        if (ObjectUtil.isEmpty(username)) {
+            return new R(506, "请输入用户名");
+        }
+        if (ObjectUtil.isEmpty(password)) {
+            return new R(506, "请输入密码");
+        }
+        User user = new User();
+        user.setUsername(username);
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>(user);
+        User one = userService.getOne(userQueryWrapper, true);
+        if (ObjectUtil.isEmpty(one)) {
+            return new R(506, "账号不存在");
+        }
+        if (!password.equals(one.getPassword())) {
+            return new R(506, "密码输入错误,请重新输入");
+        } else {
+            return R.LOGIN_SUCCESS;
+        }
+    }
+
+    /**
+     * 后台企业账号发放
+     */
+    @PostMapping("/sendAccount")
+    public R sendAccount(@RequestParam("username") String username, @RequestParam("password") String password) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setUserType(UserTypeEnum.USER_ACCOUNT.getKey());
+        userService.save(user);
+        return R.INSERT_SUCCESS;
+    }
+
+    /**
+     * 用户分页
+     * @param userType
+     * @return
+     */
+    @PostMapping("/userList")
+    public R getUserList(Integer current,Integer userType) {
+
+        if (UserTypeEnum.USER_PEOPLE.getKey().equals(userType)) {
+            // 个人
+            Page<UserPeopleVo> page = new Page<>();
+            page.setCurrent(current);
+            Page<UserPeopleVo> userPeopleVos = userService.peopleList(page,userType);
+            return R.SELECT_SUCCESS.data(userPeopleVos);
+        } else if (UserTypeEnum.USER_ACCOUNT.getKey().equals(userType)) {
+            //企业
+            Page<UserAccountVo> page = new Page<>();
+            page.setCurrent(current);
+            Page<UserAccountVo> userAccountVos = userService.accountList(page,userType);
+            return R.SELECT_SUCCESS.data(userAccountVos);
+        }
+        return R.SELECT_ERROR;
+    }
 }

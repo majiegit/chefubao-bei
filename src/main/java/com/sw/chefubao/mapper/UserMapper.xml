@@ -10,4 +10,10 @@
     <select id="selectUser" resultType="com.sw.chefubao.entity.User">
         SELECT * from  user where  open_id= #{openId}
     </select>
+    <select id="peopleList" resultType="com.sw.chefubao.vo.UserPeopleVo">
+         SELECT * from  user where  user_type= #{userType}
+    </select>
+    <select id="accountList" resultType="com.sw.chefubao.vo.UserAccountVo">
+         SELECT username,password,user_type from  user where  user_type= #{userType}
+    </select>
 </mapper>

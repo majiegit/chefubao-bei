@@ -99,8 +99,29 @@ public class DrivingLicenseController {
      */
     @GetMapping("/getByUserId")
     public R getByUserId(@RequestParam("id") String id) {
-        DrivingLicense byId = drivingLicenseService.getById(id);
-        return R.SELECT_SUCCESS.data(byId);
+        DrivingLicense item = drivingLicenseService.getById(id);
+        User user = userService.getById(item.getUserId());
+        UserCar userCar = userCarService.getById(item.getCarId());
+        CarType carType = carTypeService.getById(userCar.getCarTypeId());
+        DrivingLicenseVo drivingLicenseVo = new DrivingLicenseVo();
+        drivingLicenseVo.setId(item.getId());
+        drivingLicenseVo.setUserId(item.getUserId());
+        drivingLicenseVo.setTitle(item.getTitle());
+        drivingLicenseVo.setStamp(item.getStamp());
+        drivingLicenseVo.setCarType(carType.getCarTypeName());
+        drivingLicenseVo.setCarNum(item.getCarNum());
+        drivingLicenseVo.setOwner(user.getUsername());
+        drivingLicenseVo.setAddress(user.getAddress());
+        drivingLicenseVo.setCarMotorNum(userCar.getCarMotorNum());
+        drivingLicenseVo.setCarRackNum(userCar.getCarRackNum());
+        drivingLicenseVo.setBrand(userCar.getBrand());
+        drivingLicenseVo.setColor(userCar.getColor());
+        drivingLicenseVo.setBuyTime(userCar.getBuyDate());
+        drivingLicenseVo.setDateOfIssue(item.getDateOfIssue());
+        drivingLicenseVo.setValidity(item.getValidity());
+        drivingLicenseVo.setCarNumStatus(item.getCarNumStatus());
+        drivingLicenseVo.setCarId(item.getCarId());
+        return R.SELECT_SUCCESS.data(drivingLicenseVo);
     }
 
 
