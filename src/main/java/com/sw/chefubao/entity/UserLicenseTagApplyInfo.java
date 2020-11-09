@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 牌照申领信息
  */
@@ -24,4 +26,6 @@ public class UserLicenseTagApplyInfo {
     private Integer serviceId;
     private String carNum;
     private String peopleCarPhoto;
+    private String sysUser;
+    private Date createTime;
 }

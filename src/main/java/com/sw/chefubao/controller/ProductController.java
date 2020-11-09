@@ -211,7 +211,7 @@ public class ProductController {
         }
         //保存商品信息
         productService.save(product);
-        return R.SAVE_SUCCESS;
+        return R.SAVE_SUCCESS.data(product);
     }
 
     /**

@@ -24,4 +24,6 @@ public class User {
     private String cardImgPositive;
     private String cardImgNegative;
     private Integer userType;
+    private Integer totalNumber;
+    private Integer registerNumber;
 }

@@ -14,6 +14,6 @@
          SELECT * from  user where  user_type= #{userType}
     </select>
     <select id="accountList" resultType="com.sw.chefubao.vo.UserAccountVo">
-         SELECT username,password,user_type from  user where  user_type= #{userType}
+         SELECT id,username,password,user_type,total_number,register_number from  user where  user_type= #{userType}
     </select>
 </mapper>

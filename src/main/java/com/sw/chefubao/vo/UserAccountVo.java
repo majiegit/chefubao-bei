@@ -11,4 +11,6 @@ public class UserAccountVo {
     private String username;
     private String password;
     private Integer userType;
+    private Integer totalNumber;
+    private Integer registerNumber;
 }

@@ -92,4 +92,16 @@ public class UserCarController {
         userCarService.uploadFile(id, imgLocaltion + fileName, photoFlied);
         return R.UPLOAD_SUCCESS;
     }
+
+    /**
+     * 根据ID查询
+     * @param carId
+     * @return
+     */
+    @PostMapping("/getById")
+    public R get(@RequestParam("carId") Integer carId) {
+        UserCar byId = userCarService.getById(carId);
+        return R.SELECT_SUCCESS.data(byId);
+    }
+
 }

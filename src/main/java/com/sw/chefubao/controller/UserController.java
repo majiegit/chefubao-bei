@@ -13,6 +13,7 @@ import com.sw.chefubao.common.enums.UserTypeEnum;
 import com.sw.chefubao.common.finals.RedisKeyFinal;
 import com.sw.chefubao.common.util.FileUtils;
 import com.sw.chefubao.common.util.RedisUtils;
+import com.sw.chefubao.common.util.SmsSendUtil;
 import com.sw.chefubao.entity.User;
 import com.sw.chefubao.service.UserService;
 import com.sw.chefubao.vo.UserAccountVo;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/user")
@@ -151,18 +153,25 @@ public class UserController {
     @PostMapping("/sendAuthCode")
     public R sendAuthCode(@RequestParam("phone") String phone) {
         // 短信验证码值    需接通阿里短信服务
-        String authCode = "123456";
-        String key = RedisKeyFinal.AUTH_CODE_KEY + phone;
-        boolean exits = redisUtils.hasKey(key);
-        if (exits) {
-            redisUtils.del(key);
-        }
-        boolean set = redisUtils.set(key, authCode, 300);
-        if (!set) {
+        Random r = new Random();
+        Integer random = r.nextInt(900000) + 100000;
+        String authCode = random.toString();
+        String result = SmsSendUtil.sendAuth(authCode,phone);
+        JSONObject jsonObject = JSONUtil.parseObj(result);
+        if (jsonObject.get("Message").toString().equals("OK")) {
+            String key = RedisKeyFinal.AUTH_CODE_KEY + phone;
+            boolean exits = redisUtils.hasKey(key);
+            if (exits) {
+                redisUtils.del(key);
+            }
+            boolean set = redisUtils.set(key, authCode, 300);
+            if (!set) {
+                return R.SEND_ERROR;
+            }
+            return R.SEND_SUCCESS;
+        }else {
             return R.SEND_ERROR;
         }
-
-        return R.SEND_SUCCESS;
     }
 
     /**
@@ -240,42 +249,5 @@ public class UserController {
         } else {
             return R.LOGIN_SUCCESS;
         }
-    }
-
-    /**
-     * 后台企业账号发放
-     */
-    @PostMapping("/sendAccount")
-    public R sendAccount(@RequestParam("username") String username, @RequestParam("password") String password) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setUserType(UserTypeEnum.USER_ACCOUNT.getKey());
-        userService.save(user);
-        return R.INSERT_SUCCESS;
-    }
-
-    /**
-     * 用户分页
-     * @param userType
-     * @return
-     */
-    @PostMapping("/userList")
-    public R getUserList(Integer current,Integer userType) {
-
-        if (UserTypeEnum.USER_PEOPLE.getKey().equals(userType)) {
-            // 个人
-            Page<UserPeopleVo> page = new Page<>();
-            page.setCurrent(current);
-            Page<UserPeopleVo> userPeopleVos = userService.peopleList(page,userType);
-            return R.SELECT_SUCCESS.data(userPeopleVos);
-        } else if (UserTypeEnum.USER_ACCOUNT.getKey().equals(userType)) {
-            //企业
-            Page<UserAccountVo> page = new Page<>();
-            page.setCurrent(current);
-            Page<UserAccountVo> userAccountVos = userService.accountList(page,userType);
-            return R.SELECT_SUCCESS.data(userAccountVos);
-        }
-        return R.SELECT_ERROR;
     }
 }

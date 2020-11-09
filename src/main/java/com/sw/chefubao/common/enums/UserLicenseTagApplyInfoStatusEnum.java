@@ -7,9 +7,9 @@ package com.sw.chefubao.common.enums;
  */
 public enum UserLicenseTagApplyInfoStatusEnum {
     APPLY_STATUS_NOT(0, "未办理"),
-    APPLY_STATUS_SUCCESS(1, "已办理");
-
-
+    APPLY_STATUS_SUCCESS(1, "已办理"),
+    APPLY_STATUS_UP(2,"已上牌"),
+    APPLY_STATUS_SEND(3,"已派单");
     private Integer key;
     private String desc;
 
