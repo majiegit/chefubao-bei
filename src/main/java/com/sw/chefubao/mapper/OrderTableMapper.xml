@@ -4,4 +4,27 @@
     <update id="updateOrderStatus">
         UPDATE order_table SET `status` = #{status} WHERE id= #{orderId}
     </update>
+
+
+    <select id="pageList" resultType="com.sw.chefubao.vo.OrderTableVo">
+        SELECT
+        o.id AS order_id,
+        o.order_no,
+        o.pay_total,
+        o.`status`,
+        o.create_time,
+        ora.consignee,
+        ora.phone,
+        ora.province,
+        ora.city,
+        ora.county,
+        ora.detailed_address
+        FROM
+        order_table o
+        LEFT JOIN order_receiver_address ora ON ora.id = o.order_receiver_address_id
+
+        <if test="status != null and status != ''">
+            where o.status = #{status}
+        </if>
+    </select>
 </mapper>

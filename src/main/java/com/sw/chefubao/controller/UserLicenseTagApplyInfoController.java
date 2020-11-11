@@ -2,6 +2,7 @@ package com.sw.chefubao.controller;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,10 +12,7 @@ import com.sw.chefubao.common.enums.DrivingLicenceEnum;
 import com.sw.chefubao.common.enums.UserLicenseTagApplyInfoModeEnum;
 import com.sw.chefubao.common.enums.UserLicenseTagApplyInfoStatusEnum;
 import com.sw.chefubao.common.util.FileUtils;
-import com.sw.chefubao.entity.DrivingLicense;
-import com.sw.chefubao.entity.SysUser;
-import com.sw.chefubao.entity.UserCar;
-import com.sw.chefubao.entity.UserLicenseTagApplyInfo;
+import com.sw.chefubao.entity.*;
 import com.sw.chefubao.service.*;
 import com.sw.chefubao.vo.UserLicenseTagApplyInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -37,6 +33,8 @@ public class UserLicenseTagApplyInfoController {
     private UserLicenseTagApplyInfoService userLicenseTagApplyInfoService;
     @Autowired
     private DrivingLicenseService drivingLicenseService;
+    @Autowired
+    private UserService userService;
     @Autowired
     private UserCarService userCarService;
     @Autowired
@@ -179,7 +177,7 @@ public class UserLicenseTagApplyInfoController {
      * @return
      */
     @GetMapping("/infoList")
-    public R infoList(Page<UserLicenseTagApplyInfo> page, Integer status, Integer model,String name) {
+    public R infoList(Page<UserLicenseTagApplyInfo> page, Integer status, Integer model, String name, String regionNameParam) {
 
         SysUser sysUser = sysUserService.getByUserName(name);
         Integer regionId = sysPermissionService.getById(sysUser.getPermissionId()).getRegionId();
@@ -189,11 +187,20 @@ public class UserLicenseTagApplyInfoController {
         if (regionName.length() != 0) {
             substring = regionName.substring(0, regionName.length() - 1);
         }
-        UserLicenseTagApplyInfo userLicenseTagApplyInfo = new UserLicenseTagApplyInfo();
-        userLicenseTagApplyInfo.setStatus(status);
-        userLicenseTagApplyInfo.setMode(model);
-        QueryWrapper<UserLicenseTagApplyInfo> queryWrapper = new QueryWrapper<>(userLicenseTagApplyInfo);
-        IPage<UserLicenseTagApplyInfo> page1 = userLicenseTagApplyInfoService.page(page, queryWrapper.like("address", substring));
+
+        String sql = ".*";
+        if (ObjectUtil.isNotEmpty(substring)) {
+            if (ObjectUtil.isNotEmpty(regionNameParam)) {
+                sql = "^" + substring + ".*" + regionNameParam + ".*";
+            } else {
+                sql = "^" + substring + ".*";
+            }
+        } else {
+            if (ObjectUtil.isNotEmpty(regionNameParam)) {
+                sql = ".*" + regionNameParam + ".*";
+            }
+        }
+        IPage<UserLicenseTagApplyInfo> page1 = userLicenseTagApplyInfoService.pageList(page, status, model, sql);
         return R.SELECT_SUCCESS.data(page1);
     }
 
@@ -214,10 +221,13 @@ public class UserLicenseTagApplyInfoController {
      * 后台账户申领信息查询
      */
     @PostMapping("/getApplyInfo")
-    public R getApplyInfo(Page<UserLicenseTagApplyInfo> page, @RequestParam("sysUser") String sysUser) {
+    public R getApplyInfo(Page<UserLicenseTagApplyInfo> page, Integer status, @RequestParam("sysUser") String sysUser) {
         UserLicenseTagApplyInfo userLicenseTagApplyInfo = new UserLicenseTagApplyInfo();
         userLicenseTagApplyInfo.setSysUser(sysUser);
-        userLicenseTagApplyInfo.setStatus(UserLicenseTagApplyInfoStatusEnum.APPLY_STATUS_NOT.getKey());
+        if (ObjectUtil.isEmpty(status)) {
+            status = UserLicenseTagApplyInfoStatusEnum.APPLY_STATUS_NOT.getKey();
+        }
+        userLicenseTagApplyInfo.setStatus(status);
         QueryWrapper<UserLicenseTagApplyInfo> queryWrapper = new QueryWrapper<>(userLicenseTagApplyInfo);
         IPage<UserLicenseTagApplyInfo> page1 = userLicenseTagApplyInfoService.page(page, queryWrapper);
         return R.SELECT_SUCCESS.data(page1);
@@ -240,5 +250,43 @@ public class UserLicenseTagApplyInfoController {
         return R.UPDATE_SUCCESS;
     }
 
-
+    /**
+     * 服务点查询
+     *
+     * @return
+     */
+    @PostMapping("/getService")
+    public R uploadLicense(@RequestParam("phone") String phone, String username) {
+        User user = new User();
+        user.setPhone(phone);
+        if (ObjectUtil.isNotEmpty(username)) {
+            user.setUsername(username);
+        }
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>(user);
+        User user1 = userService.getOne(userQueryWrapper, true);
+        if (ObjectUtil.isEmpty(user1)) {
+            return new R(506, "当前手机号没有找到该用户");
+        }
+        UserLicenseTagApplyInfo userLicenseTagApplyInfo = new UserLicenseTagApplyInfo();
+        userLicenseTagApplyInfo.setUserId(user1.getId());
+        userLicenseTagApplyInfo.setMode(UserLicenseTagApplyInfoModeEnum.MODE_SERVICE.getKey());
+        userLicenseTagApplyInfo.setStatus(UserLicenseTagApplyInfoStatusEnum.APPLY_STATUS_NOT.getKey());
+        QueryWrapper<UserLicenseTagApplyInfo> queryWrapper = new QueryWrapper<>(userLicenseTagApplyInfo);
+        List<UserLicenseTagApplyInfo> list = userLicenseTagApplyInfoService.list(queryWrapper);
+        LinkedList<Map> lists = new LinkedList<>();
+        list.forEach((item) -> {
+            UserCar userCar = userCarService.getById(item.getCarId());
+            LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+            map.put("id", item.getId());
+            map.put("phone", user1.getPhone());
+            map.put("name", user1.getUsername());
+            map.put("brand", userCar.getBrand());
+            map.put("color", userCar.getColor());
+            map.put("buyDate", userCar.getBuyDate());
+            map.put("carMotorNum", userCar.getCarMotorNum());
+            map.put("carRackNum", userCar.getCarRackNum());
+            lists.add(map);
+        });
+        return R.SELECT_SUCCESS.data(lists);
+    }
 }

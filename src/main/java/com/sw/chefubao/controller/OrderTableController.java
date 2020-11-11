@@ -2,7 +2,10 @@ package com.sw.chefubao.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sw.chefubao.common.R;
 import com.sw.chefubao.common.enums.OrderStatusEnum;
 import com.sw.chefubao.common.finals.RedisKeyFinal;
@@ -12,6 +15,7 @@ import com.sw.chefubao.entity.*;
 import com.sw.chefubao.service.*;
 import com.sw.chefubao.vo.OrderProductVo;
 import com.sw.chefubao.vo.OrderSaveParamVo;
+import com.sw.chefubao.vo.OrderTableVo;
 import com.sw.chefubao.vo.OrderVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,5 +134,24 @@ public class OrderTableController {
             return R.DELETE_ERROR;
         }
         return R.DELETE_SUCCESS;
+    }
+
+    /**
+     * 订单查询
+     */
+    @PostMapping("/page")
+    public R page(Page<OrderTableVo> orderTableIPage, Integer status) {
+        IPage<OrderTableVo> page = orderService.pageList(orderTableIPage, status);
+        return R.SELECT_SUCCESS.data(page);
+    }
+
+    /**
+     * 订单商品查询
+     */
+
+    @PostMapping("/getByOrderId")
+    public R getByOrderId(Integer orderId) {
+        List<OrderProductVo> productList = orderProductService.listByOrderId(orderId);
+        return R.SELECT_SUCCESS.data(productList);
     }
 }

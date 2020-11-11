@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sw.chefubao.mapper.UserLicenseTagApplyInfoMapper">
+    <select id="pageList" resultType="com.sw.chefubao.entity.UserLicenseTagApplyInfo">
+        SELECT * from user_license_tag_apply_info
+        <where>
+            address   REGEXP #{sql}
+            <if test="status != null and status != ''">
+               and `status`= #{status}
+            </if>
+
+            <if test="model != null and model != ''">
+              and  `model`= #{model}
+            </if>
+        </where>
+    </select>
+</mapper>

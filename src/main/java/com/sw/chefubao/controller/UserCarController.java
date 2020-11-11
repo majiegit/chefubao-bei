@@ -2,13 +2,20 @@ package com.sw.chefubao.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sw.chefubao.common.R;
 import com.sw.chefubao.common.config.ApplicaTionYmlConfig;
+import com.sw.chefubao.common.enums.UserTypeEnum;
 import com.sw.chefubao.common.util.FileUtils;
+import com.sw.chefubao.entity.CarType;
+import com.sw.chefubao.entity.User;
 import com.sw.chefubao.entity.UserCar;
+import com.sw.chefubao.service.CarTypeService;
 import com.sw.chefubao.service.DrivingLicenseService;
 import com.sw.chefubao.service.UserCarService;
+import com.sw.chefubao.service.UserService;
 import com.sw.chefubao.vo.UserCarParamVo;
+import com.sw.chefubao.vo.UserCarVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +27,10 @@ public class UserCarController {
 
     @Autowired
     private UserCarService userCarService;
+    @Autowired
+    private CarTypeService carTypeService;
+    @Autowired
+    private UserService userService;
     @Autowired
     private ApplicaTionYmlConfig applicaTionYmlConfig;
     @Autowired
@@ -64,7 +75,30 @@ public class UserCarController {
             r.setMessage("请选择购买时间");
             return r;
         }
+        //  校验用户类型
+        User user = userService.getById(userCarParamVo.getUserId());
+        Integer userType = user.getUserType();
+        // 获取用户下车辆数量
+        UserCar userCarParam = new UserCar();
+        userCarParam.setUserId(userCarParamVo.getUserId());
+        QueryWrapper<UserCar> userQueryWrapper = new QueryWrapper<>(userCarParam);
+        int count = userCarService.count(userQueryWrapper);
+        if (userType.equals(UserTypeEnum.USER_PEOPLE.getKey())) {
+            // 个人
+            if (count == 3) {
+                return new R(503, "当前账号登记车辆数量为3辆，已达到最大限制");
+            }
+        }
+        if (userType.equals(UserTypeEnum.USER_ACCOUNT.getKey())) {
+            //企业
+            if (count == user.getTotalNumber()) {
+                return new R(503, "当前账号登记车辆数量为" + user.getTotalNumber() + "辆，已达到最大限制");
+            }
+            user.setRegisterNumber(count);
+            userService.save(user);
+        }
         UserCar userCar = BeanUtil.toBean(userCarParamVo, UserCar.class);
+
         boolean save = userCarService.save(userCar);
         if (save) {
             drivingLicenseService.createDrivingLicense(userCarParamVo, userCar.getId());
@@ -95,13 +129,17 @@ public class UserCarController {
 
     /**
      * 根据ID查询
+     *
      * @param carId
      * @return
      */
     @PostMapping("/getById")
     public R get(@RequestParam("carId") Integer carId) {
-        UserCar byId = userCarService.getById(carId);
-        return R.SELECT_SUCCESS.data(byId);
+        UserCar userCar = userCarService.getById(carId);
+        CarType carType = carTypeService.getById(userCar.getCarTypeId());
+        UserCarVo userCarVo = BeanUtil.toBean(userCar, UserCarVo.class);
+        userCarVo.setCarTypeName(carType.getCarTypeName());
+        return R.SELECT_SUCCESS.data(userCarVo);
     }
 
 }

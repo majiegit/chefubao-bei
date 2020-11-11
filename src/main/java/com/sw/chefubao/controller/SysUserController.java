@@ -60,7 +60,7 @@ public class SysUserController {
 
             HashMap<String, Object> map = new HashMap<>();
             ArrayList<String> strings = new ArrayList<>();
-            strings.add(sysPermission.getType().toString());
+            strings.add(sysUser.getType().toString());
             map.put("roles", strings);
             map.put("name", sysUser.getUsername());
             map.put("token", sysUser.getUsername());

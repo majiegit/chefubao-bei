@@ -3,6 +3,7 @@ package com.sw.chefubao.service.impl;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sw.chefubao.common.enums.OrderStatusEnum;
 import com.sw.chefubao.entity.OrderProduct;
@@ -13,6 +14,7 @@ import com.sw.chefubao.mapper.OrderReceiverAddressMapper;
 import com.sw.chefubao.mapper.OrderTableMapper;
 import com.sw.chefubao.service.OrderTableService;
 import com.sw.chefubao.service.ProductService;
+import com.sw.chefubao.vo.OrderTableVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,4 +66,10 @@ public class OrderTableServiceImpl extends ServiceImpl<OrderTableMapper, OrderTa
         baseMapper.deleteById(id);
         return true;
     }
+
+    @Override
+    public IPage<OrderTableVo> pageList(IPage<OrderTableVo> orderTableIPage, Integer status) {
+       return baseMapper.pageList(orderTableIPage, status);
+    }
+
 }
