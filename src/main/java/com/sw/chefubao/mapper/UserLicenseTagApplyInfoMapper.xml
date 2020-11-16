@@ -4,14 +4,47 @@
     <select id="pageList" resultType="com.sw.chefubao.entity.UserLicenseTagApplyInfo">
         SELECT * from user_license_tag_apply_info
         <where>
-            address   REGEXP #{sql}
+            address REGEXP #{sql}
             <if test="status != null and status != ''">
-               and `status`= #{status}
+                and `status`= #{status}
             </if>
 
             <if test="model != null and model != ''">
-              and  `model`= #{model}
+                and `model`= #{model}
             </if>
         </where>
+    </select>
+    <select id="statics" resultType="int">
+        SELECT
+        count(*)
+        FROM
+        user_license_tag_apply_info
+        WHERE
+        create_time >= #{startTime}
+        AND create_time &lt;= #{endTime}
+        AND address REGEXP #{address}
+    </select>
+
+    <select id="staticsTotal" resultType="int">
+      SELECT
+	COUNT(*)
+FROM
+	user_license_tag_apply_info ul
+INNER JOIN user_car uc ON ul.car_id = uc.id
+WHERE
+	ul.address REGEXP #{address}
+AND uc.car_type_id = #{typeId}
+    </select>
+    <select id="staticsTotalByTime" resultType="java.lang.Integer">
+      SELECT
+	COUNT(*)
+FROM
+	user_license_tag_apply_info ul
+INNER JOIN user_car uc ON ul.car_id = uc.id
+WHERE
+	ul.address REGEXP '.*'
+AND create_time >= #{startTime}
+AND create_time &lt;= #{endTime}
+AND uc.car_type_id = #{typeId}
     </select>
 </mapper>

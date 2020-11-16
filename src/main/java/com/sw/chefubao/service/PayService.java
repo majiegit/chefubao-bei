@@ -4,6 +4,7 @@ import java.util.Map;
 
 public interface PayService {
     Map wxPay(String spbill_create_ip, String code, Integer orderId);
+    Map wxPay(String spbill_create_ip, String code, Double price);
 
     int updateOrderStatus(String orderId);
 }

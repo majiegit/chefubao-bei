@@ -8,8 +8,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://39.99.138.203:3306/chefubao?characterEncoding=utf-8&useSSL=false
-    username: root1
-    password: liu970908
+    username: root
+    password: 123456
   # redis 配置
   redis:
     database: 0

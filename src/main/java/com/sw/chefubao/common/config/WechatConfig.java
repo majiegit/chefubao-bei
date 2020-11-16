@@ -11,6 +11,7 @@ public class WechatConfig {
     public static final String secret = "2167d0953e9d114ce8a108bba3118047";
     //支付成功后的服务器回调url，这里填PayController里的回调函数地址
     public static final String notify_url = "http://39.99.138.203:8080/chefubao/orderpay/wxNotify";
+    public static final String price_url = "http://39.99.138.203:8080/chefubao/pay/wxNotify";
     //交易类型，小程序支付的固定值为JSAPI
     public static final String TRADETYPE = "JSAPI";
     //微信统一下单接口地址
