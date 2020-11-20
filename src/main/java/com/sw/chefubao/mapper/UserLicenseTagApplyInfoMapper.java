@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface UserLicenseTagApplyInfoMapper extends BaseMapper<UserLicenseTagApplyInfo> {
 
-    IPage<UserLicenseTagApplyInfo> pageList(Page<UserLicenseTagApplyInfo> page, @Param("status") Integer status, @Param("model") Integer model, @Param("sql") String sql);
+    IPage<UserLicenseTagApplyInfo> pageList(Page<UserLicenseTagApplyInfo> page, @Param("status") Integer status, @Param("mode") Integer mode, @Param("sql") String sql);
 
     int statics(@Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime, @Param("address") String address);
 

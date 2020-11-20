@@ -5,12 +5,12 @@
         SELECT * from user_license_tag_apply_info
         <where>
             address REGEXP #{sql}
-            <if test="status != null and status != ''">
+            <if test="status != null">
                 and `status`= #{status}
             </if>
 
-            <if test="model != null and model != ''">
-                and `model`= #{model}
+            <if test="mode != null">
+                and mode = #{mode}
             </if>
         </where>
     </select>

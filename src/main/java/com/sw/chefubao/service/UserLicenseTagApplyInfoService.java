@@ -8,7 +8,7 @@ import com.sw.chefubao.entity.UserLicenseTagApplyInfo;
 
 public interface UserLicenseTagApplyInfoService extends IService<UserLicenseTagApplyInfo> {
 
-    IPage<UserLicenseTagApplyInfo> pageList(Page<UserLicenseTagApplyInfo> page, Integer status, Integer model, String sql);
+    IPage<UserLicenseTagApplyInfo> pageList(Page<UserLicenseTagApplyInfo> page, Integer status, Integer mode, String sql);
 
     int statics(DateTime startTime, DateTime endTime, String address);
 

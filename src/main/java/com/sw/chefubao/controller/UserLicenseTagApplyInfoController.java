@@ -173,7 +173,7 @@ public class UserLicenseTagApplyInfoController {
     /***
      *  状态 申领信息类型查询
      * @param status  0 未办理  1 已办理 2 已上牌
-     * @param model
+     * @param mode
      * @return
      */
     @GetMapping("/infoList")

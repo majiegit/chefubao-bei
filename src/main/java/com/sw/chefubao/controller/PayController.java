@@ -40,7 +40,7 @@ public class PayController {
         try {
             String spbill_create_ip = getIpAddr(request);
             //将支付业务下沉到service层
-            result = payService.wxPay(spbill_create_ip, code, price);
+            result = payService.wxPayPrice(spbill_create_ip, code, price);
         } catch (Exception e) {
             e.printStackTrace();
         }

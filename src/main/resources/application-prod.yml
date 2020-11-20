@@ -25,6 +25,12 @@ spring:
     static-path-pattern: ${image-path}/**
   resources:
     static-locations: file:${image-path}
+  servlet:
+    multipart:
+      enabled: true  #配置文件传输
+      file-size-threshold: 0
+      max-file-size: 100MB      #单个文件的最大上线，如果设置成-1代表不做限制
+      max-request-size: 100MB   #单个请求的文件总大小上限，如果设置成-1代表不做限制
 # 图片上传地址
 image-path: /home/image
 

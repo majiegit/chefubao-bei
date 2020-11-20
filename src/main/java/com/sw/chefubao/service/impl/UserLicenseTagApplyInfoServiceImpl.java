@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserLicenseTagApplyInfoServiceImpl extends ServiceImpl<UserLicenseTagApplyInfoMapper, UserLicenseTagApplyInfo> implements UserLicenseTagApplyInfoService {
     @Override
-    public IPage<UserLicenseTagApplyInfo> pageList(Page<UserLicenseTagApplyInfo> page, Integer status, Integer model, String sql) {
+    public IPage<UserLicenseTagApplyInfo> pageList(Page<UserLicenseTagApplyInfo> page, Integer status, Integer mode, String sql) {
 
-        return baseMapper.pageList(page, status, model, sql);
+        return baseMapper.pageList(page, status, mode, sql);
     }
 
     @Override

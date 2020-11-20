@@ -7,6 +7,7 @@ import com.github.wxpay.sdk.WXPayUtil;
 import com.sw.chefubao.common.config.WechatConfig;
 import com.sw.chefubao.common.enums.OrderStatusEnum;
 import com.sw.chefubao.common.util.HttpRequest;
+import com.sw.chefubao.common.util.NumberUtils;
 import com.sw.chefubao.common.util.PayUtil;
 import com.sw.chefubao.entity.OrderTable;
 import com.sw.chefubao.mapper.OrderTableMapper;
@@ -36,7 +37,7 @@ public class PayServiceImpl implements PayService {
     public int updateOrderStatus(String orderId) {
         int id = NumberUtil.parseInt(orderId);
         Integer key = OrderStatusEnum.ORDER_WAIT_FOR_SHIPMENTS.getKey();
-        System.out.print("key:"+key);
+        System.out.print("key:" + key);
         int update = orderTableMapper.updateOrderStatus(id, OrderStatusEnum.ORDER_WAIT_FOR_SHIPMENTS.getKey());
         return update;
     }
@@ -125,16 +126,18 @@ public class PayServiceImpl implements PayService {
     }
 
     @Override
-    public Map wxPay(String spbill_create_ip, String code, Double price) {
+    public Map wxPayPrice(String spbill_create_ip, String code, Double price) {
         //页面获取openId接口
         String getopenid_url = "https://api.weixin.qq.com/sns/jscode2session";
         String param = "appid=" + WechatConfig.appid + "&secret=" + WechatConfig.secret + "&js_code=" + code + "&grant_type=authorization_code";
         //向微信服务器发送get请求获取openIdStr
         String openIdStr = HttpRequest.sendGet(getopenid_url, param);
         JSONObject json = JSONUtil.parseObj(openIdStr);//转成Json格式
+        logger.info("json:", json);
         String openId = json.get("openid").toString();//获取openId
-        double totalPrice = NumberUtil.mul(price.doubleValue(), 100);
-
+        Double totalPrice = NumberUtil.mul(price.doubleValue(), 100);
+        Integer priceInt = totalPrice.intValue();
+        logger.info("priceInt", priceInt);
         Map<String, Object> payMap = new HashMap<String, Object>();//返回给小程序端需要的参数
         try {
             //生成的随机字符串
@@ -149,8 +152,8 @@ public class PayServiceImpl implements PayService {
             packageParams.put("mch_id", WechatConfig.mch_id);
             packageParams.put("nonce_str", nonce_str);
             packageParams.put("body", body);
-            packageParams.put("out_trade_no", "111111111111");//商户订单号
-            packageParams.put("total_fee", totalPrice + "");//支付金额，这边需要转成字符串类型，否则后面的签名会失败
+            packageParams.put("out_trade_no", NumberUtils.getRandomTest());//商户订单号
+            packageParams.put("total_fee", priceInt + "");//支付金额，这边需要转成字符串类型，否则后面的签名会失败
             packageParams.put("spbill_create_ip", spbill_create_ip);
             packageParams.put("notify_url", WechatConfig.price_url);//支付成功后的回调地址
             packageParams.put("trade_type", WechatConfig.TRADETYPE);//支付方式
@@ -172,6 +175,7 @@ public class PayServiceImpl implements PayService {
 
             // 将解析结果存储在HashMap中
             Map map = PayUtil.doXMLParse(result);
+            logger.info("map",map);
             String return_code = (String) map.get("return_code");//返回状态码
             String result_code = (String) map.get("result_code");//返回状态码
 

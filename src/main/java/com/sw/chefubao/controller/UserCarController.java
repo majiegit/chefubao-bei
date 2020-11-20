@@ -139,6 +139,7 @@ public class UserCarController {
         CarType carType = carTypeService.getById(userCar.getCarTypeId());
         UserCarVo userCarVo = BeanUtil.toBean(userCar, UserCarVo.class);
         userCarVo.setCarTypeName(carType.getCarTypeName());
+
         return R.SELECT_SUCCESS.data(userCarVo);
     }
 
